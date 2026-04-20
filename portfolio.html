@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Scientist in Orbit | Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  --bg: #000510;
+  --bg2: #020a18;
+  --cyan: #00f5ff;
+  --blue: #0055ff;
+  --blue-lt: #4da6ff;
+  --orange: #ff6b35;
+  --gold: #ffd700;
+  --text: #b8ccee;
+  --text-bright: #e4eeff;
+  --glass: rgba(0,20,55,0.45);
+  --glass-b: rgba(0,245,255,0.12);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;cursor:none;overflow-x:hidden}
+
+/* ─── CURSOR ─────────────────────────────── */
+#cdot,#cring{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%)}
+#cdot{width:6px;height:6px;background:var(--cyan);box-shadow:0 0 12px var(--cyan),0 0 24px var(--cyan);transition:width .15s,height .15s}
+#cring{width:34px;height:34px;border:1.5px solid rgba(0,245,255,.55);z-index:9998;transition:width .25s,height .25s,border-color .25s}
+
+/* ─── STARS CANVAS ────────────────────────── */
+#sc{position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:0;pointer-events:none}
+
+/* ─── LAUNCH SCREEN ──────────────────────── */
+#ls{position:fixed;inset:0;z-index:100;overflow:hidden}
+#sky{position:absolute;inset:0;z-index:0;
+  background:linear-gradient(180deg,#8ec8e8 0%,#4a8ec8 18%,#1a4c8a 38%,#061435 58%,#020818 78%,#000005 100%)}
+.cld{position:absolute;border-radius:40px;background:rgba(255,255,255,.75);filter:blur(6px);z-index:3}
+#c1{width:220px;height:44px;top:36%;left:4%}
+#c2{width:160px;height:32px;top:43%;right:7%}
+#c3{width:110px;height:22px;top:50%;left:22%;opacity:.6}
+#earth{position:absolute;bottom:-85vw;left:50%;transform:translateX(-50%);width:200vw;height:200vw;border-radius:50%;
+  background:radial-gradient(ellipse at 28% 28%,#1e6b38,#0e4825 22%,#1a3c70 42%,#0a1f52 60%,#030c26 80%);
+  box-shadow:0 0 80px rgba(40,120,255,.25),inset 0 0 120px rgba(0,0,0,.6);z-index:2}
+#earth::before{content:'';position:absolute;top:3%;left:10%;width:25%;height:18%;
+  background:rgba(30,107,56,.5);border-radius:40% 60% 55% 45%;filter:blur(4px)}
+#earth::after{content:'';position:absolute;top:8%;left:35%;width:30%;height:20%;
+  background:rgba(30,107,56,.4);border-radius:55% 45% 40% 60%;filter:blur(4px)}
+
+/* ─── LAUNCH COMPLEX ─────────────────────── */
+#lc{position:absolute;bottom:72px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:10}
+#rw{position:relative;display:flex;justify-content:center;z-index:6}
+#rsv{width:88px;height:206px;filter:drop-shadow(0 0 18px rgba(0,245,255,.28))}
+#fc{position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:64px;height:110px;opacity:0;pointer-events:none;z-index:4}
+.fl-core{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:72px;
+  background:linear-gradient(to top,#fff 0%,#ffff80 15%,#ffcc00 35%,#ff8800 65%,transparent 100%);
+  border-radius:50% 50% 0 0;animation:flk .12s infinite alternate}
+.fl-mid{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:36px;height:96px;
+  background:linear-gradient(to top,#ff3300 0%,#ff8800 30%,#ffaa00 58%,transparent 100%);
+  border-radius:50% 50% 0 0;animation:flk2 .18s infinite alternate;opacity:.82}
+.fl-plasma{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:64px;height:118px;
+  background:radial-gradient(ellipse at 50% 100%,rgba(255,160,0,.45),rgba(255,80,0,.18) 50%,transparent 75%);
+  animation:flk .22s infinite alternate}
+@keyframes flk{0%{transform:translateX(-50%) scaleX(.88) scaleY(1.06)}100%{transform:translateX(-50%) scaleX(1.12) scaleY(.94)}}
+@keyframes flk2{0%{transform:translateX(-50%) scaleX(.94) scaleY(.97)}100%{transform:translateX(-50%) scaleX(1.06) scaleY(1.03)}}
+
+/* platform */
+#pa{display:flex;flex-direction:column;align-items:center;position:relative;width:200px}
+#lp{width:158px;height:17px;background:linear-gradient(180deg,#5a5a5a,#333);border-radius:3px;box-shadow:0 4px 20px rgba(0,0,0,.8);z-index:3;position:relative}
+#lp::before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:58px;height:7px;background:#484848;border-radius:2px}
+.str{position:absolute;bottom:17px;width:10px;height:68px;background:linear-gradient(90deg,#5a5a5a,#444);border-radius:2px;z-index:2}
+.str.l{right:36px;transform:rotate(-13deg);transform-origin:bottom center}
+.str.r{left:36px;transform:rotate(13deg);transform-origin:bottom center}
+.armc{position:absolute;bottom:17px;width:130px;height:7px;background:linear-gradient(180deg,#505050,#333);border-radius:3px;z-index:1}
+
+/* ─── TERMINAL ────────────────────────────── */
+#term{position:absolute;top:18px;left:18px;background:rgba(0,8,22,.88);border:1px solid rgba(0,245,255,.28);
+  border-radius:10px;padding:15px;font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--cyan);
+  width:275px;z-index:50;box-shadow:0 0 25px rgba(0,245,255,.08)}
+#th{display:flex;gap:6px;margin-bottom:10px;align-items:center}
+.td{width:11px;height:11px;border-radius:50%}
+.td.r{background:#ff5f57}.td.y{background:#ffbd2e}.td.g{background:#28ca41}
+#tc{line-height:1.85}
+.tl{display:block;color:inherit;min-height:16px}
+.cur{display:inline-block;width:7px;height:13px;background:var(--cyan);animation:bl 1s step-end infinite;vertical-align:middle;margin-left:2px}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ─── LAUNCH BUTTON ─────────────────────── */
+#lb{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  padding:15px 50px;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;
+  color:#000;background:linear-gradient(135deg,var(--cyan),var(--blue));border:none;border-radius:50px;
+  cursor:none;z-index:50;opacity:0;
+  box-shadow:0 0 22px var(--cyan),0 0 45px rgba(0,245,255,.35),inset 0 1px 0 rgba(255,255,255,.3);
+  animation:bp 2.2s ease-in-out infinite;transition:transform .2s}
+#lb:hover{transform:translateX(-50%) scale(1.06)}
+@keyframes bp{0%,100%{box-shadow:0 0 22px var(--cyan),0 0 45px rgba(0,245,255,.35)}
+  50%{box-shadow:0 0 32px var(--cyan),0 0 75px rgba(0,245,255,.55)}}
+
+/* smoke */
+.spuff{position:fixed;border-radius:50%;pointer-events:none;z-index:99;
+  background:radial-gradient(circle,rgba(190,190,190,.72),rgba(100,100,100,.3),transparent)}
+
+/* ─── PORTFOLIO ──────────────────────────── */
+#port{opacity:0;pointer-events:none}
+#port.on{pointer-events:all}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:14px 5%;display:flex;
+  justify-content:space-between;align-items:center;
+  background:rgba(0,4,14,.62);backdrop-filter:blur(22px);border-bottom:1px solid var(--glass-b)}
+.nl{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:900;color:var(--cyan);
+  text-shadow:0 0 20px var(--cyan);letter-spacing:2px}
+.nm{display:flex;gap:28px;list-style:none}
+.nm a{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2.5px;color:var(--text);
+  text-decoration:none;transition:color .3s;position:relative}
+.nm a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;
+  background:var(--cyan);box-shadow:0 0 6px var(--cyan);transition:width .3s}
+.nm a:hover{color:var(--cyan)}.nm a:hover::after{width:100%}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:100px 5% 60px;position:relative;overflow:hidden}
+.hc{text-align:center;position:relative;z-index:5}
+.hbadge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);
+  border:1px solid rgba(0,245,255,.45);padding:6px 18px;border-radius:20px;margin-bottom:22px;
+  letter-spacing:3px;box-shadow:0 0 16px rgba(0,245,255,.18);animation:gb 3s ease-in-out infinite}
+@keyframes gb{0%,100%{box-shadow:0 0 16px rgba(0,245,255,.18)}50%{box-shadow:0 0 28px rgba(0,245,255,.38)}}
+.htitle{font-family:'Orbitron',sans-serif;font-size:clamp(2.2rem,5.5vw,4.8rem);font-weight:900;
+  line-height:1.1;color:var(--text-bright);text-shadow:0 0 40px rgba(0,245,255,.18);margin-bottom:6px}
+.htitle .ac{color:var(--cyan);text-shadow:0 0 30px var(--cyan)}
+.hsub{font-size:clamp(1.1rem,2.2vw,1.55rem);color:var(--blue-lt);margin-bottom:28px;letter-spacing:.5px}
+.htags{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+.tag{padding:7px 18px;border:1px solid rgba(0,245,255,.25);border-radius:20px;
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);background:rgba(0,245,255,.04);letter-spacing:.5px}
+
+/* avatar */
+.avw{position:relative;width:164px;height:164px;margin:0 auto 28px}
+.avring{position:absolute;inset:-4px;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--cyan),transparent 35%,var(--blue) 55%,transparent 75%,var(--cyan));
+  animation:rr 4s linear infinite}
+.avring::after{content:'';position:absolute;inset:5px;border-radius:50%;background:var(--bg2)}
+.av{position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#0a1a3c,#102244);
+  display:flex;align-items:center;justify-content:center;font-size:68px;filter:grayscale(.75);
+  transition:filter .4s,box-shadow .4s;z-index:1;overflow:hidden}
+.avw:hover .av{filter:grayscale(0);box-shadow:0 0 40px rgba(0,245,255,.5)}
+@keyframes rr{to{transform:rotate(360deg)}}
+
+.btn-p,.btn-o{padding:13px 34px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:2px;border-radius:30px;cursor:none;text-decoration:none;display:inline-block;transition:transform .2s,box-shadow .2s}
+.btn-p{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#000;border:none;
+  box-shadow:0 0 18px rgba(0,245,255,.38)}
+.btn-p:hover{transform:translateY(-3px);box-shadow:0 0 30px rgba(0,245,255,.6)}
+.btn-o{background:transparent;color:var(--cyan);border:1px solid rgba(0,245,255,.45)}
+.btn-o:hover{background:rgba(0,245,255,.08);transform:translateY(-3px);box-shadow:0 0 18px rgba(0,245,255,.25)}
+.hcta{display:inline-flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+/* ticker */
+.ticker{position:absolute;bottom:0;left:0;right:0;padding:12px 0;
+  border-top:1px solid rgba(0,245,255,.08);overflow:hidden}
+.tick-inner{display:flex;gap:48px;white-space:nowrap;animation:tick 20s linear infinite}
+.tick-item{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(0,245,255,.55);letter-spacing:2px}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTION BASE */
+.sec{padding:90px 5%;position:relative}
+.shead{text-align:center;margin-bottom:64px}
+.slabel{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--cyan);
+  text-transform:uppercase;margin-bottom:10px;display:block}
+.stitle{font-family:'Orbitron',sans-serif;font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:700;
+  color:var(--text-bright);line-height:1.2}
+.stitle span{color:var(--cyan);text-shadow:0 0 18px var(--cyan)}
+.sline{width:70px;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  margin:18px auto 0;box-shadow:0 0 8px var(--cyan)}
+.div{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.15),transparent)}
+
+/* ABOUT */
+#about{background:linear-gradient(180deg,transparent,rgba(0,25,55,.25),transparent)}
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;max-width:1180px;margin:0 auto}
+.atxt p{font-size:16.5px;line-height:1.95;color:var(--text);margin-bottom:18px}
+.atxt strong{color:var(--cyan)}
+.sbars{display:flex;flex-direction:column;gap:18px}
+.si label{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text);margin-bottom:7px}
+.sbar{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.sfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:3px;width:0;
+  box-shadow:0 0 8px var(--cyan);transition:width 1.6s cubic-bezier(.25,.1,.25,1)}
+
+/* ACHIEVEMENTS */
+.agr{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:22px;max-width:1180px;margin:0 auto}
+.ac{background:var(--glass);border:1px solid var(--glass-b);border-radius:16px;padding:30px 22px;text-align:center;
+  backdrop-filter:blur(10px);transition:transform .3s,box-shadow .3s,border-color .3s;position:relative;overflow:hidden}
+.ac::before{content:'';position:absolute;top:-60%;left:-60%;width:220%;height:220%;
+  background:radial-gradient(circle,rgba(0,245,255,.05),transparent 55%);opacity:0;transition:opacity .35s}
+.ac:hover{transform:translateY(-8px);box-shadow:0 20px 55px rgba(0,245,255,.14);border-color:rgba(0,245,255,.36)}
+.ac:hover::before{opacity:1}
+.aico{font-size:38px;margin-bottom:14px;display:block}
+.atit{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--text-bright);margin-bottom:8px}
+.adsc{font-size:13.5px;color:rgba(184,204,238,.7);line-height:1.65}
+.abadge{display:inline-block;margin-top:14px;padding:4px 11px;background:rgba(0,245,255,.08);
+  border:1px solid rgba(0,245,255,.28);border-radius:20px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan)}
+
+/* PROJECTS */
+.pgr{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:26px;max-width:1180px;margin:0 auto}
+.pc{background:var(--glass);border:1px solid var(--glass-b);border-radius:20px;padding:30px;
+  backdrop-filter:blur(10px);transition:box-shadow .3s,border-color .3s;
+  transform-style:preserve-3d;position:relative;overflow:hidden}
+.pc::after{content:'';position:absolute;inset:0;border-radius:20px;
+  background:linear-gradient(135deg,rgba(0,245,255,.07),transparent 55%);opacity:0;transition:opacity .3s;pointer-events:none}
+.pc:hover{box-shadow:0 18px 55px rgba(0,245,255,.18),0 0 0 1px rgba(0,245,255,.28);border-color:rgba(0,245,255,.38)}
+.pc:hover::after{opacity:1}
+.pico{font-size:34px;margin-bottom:14px}
+.ptit{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--text-bright);margin-bottom:11px}
+.pdsc{font-size:13.5px;color:rgba(184,204,238,.72);line-height:1.7;margin-bottom:18px}
+.ptags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.ptag{padding:3px 11px;background:rgba(0,85,255,.14);border:1px solid rgba(0,85,255,.28);border-radius:12px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--blue-lt)}
+.plinks{display:flex;gap:10px}
+.plink{padding:8px 15px;border:1px solid rgba(0,245,255,.28);border-radius:20px;
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);text-decoration:none;
+  transition:background .2s,box-shadow .2s}
+.plink:hover{background:rgba(0,245,255,.1);box-shadow:0 0 14px rgba(0,245,255,.28)}
+
+/* HOBBIES */
+#hobbies{background:linear-gradient(180deg,transparent,rgba(0,20,48,.25),transparent)}
+.hgr{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;max-width:980px;margin:0 auto}
+.hcard{background:var(--glass);border:1px solid var(--glass-b);border-radius:20px;padding:38px 18px;
+  text-align:center;backdrop-filter:blur(10px);transition:transform .3s,box-shadow .3s,border-color .3s}
+.hcard:hover{transform:translateY(-10px) scale(1.04);box-shadow:0 18px 40px rgba(0,245,255,.14);border-color:rgba(0,245,255,.38)}
+.hico{font-size:46px;margin-bottom:14px;display:block}
+.hnam{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:600;color:var(--text-bright)}
+.hdsc{font-size:12px;color:var(--text);margin-top:6px;opacity:.75}
+
+/* CONTACT */
+#contact{padding:90px 5% 140px}
+.ccon{max-width:680px;margin:0 auto;text-align:center}
+.cdsc{font-size:17px;color:var(--text);margin-bottom:44px;line-height:1.85}
+.sgr{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-bottom:44px}
+.slink{display:flex;align-items:center;gap:11px;padding:15px 30px;background:var(--glass);
+  border:1px solid var(--glass-b);border-radius:14px;text-decoration:none;color:var(--text-bright);
+  font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;
+  backdrop-filter:blur(10px);transition:transform .3s,box-shadow .3s,border-color .3s,color .3s}
+.slink:hover{transform:translateY(-5px);box-shadow:0 14px 38px rgba(0,245,255,.18);
+  border-color:rgba(0,245,255,.48);color:var(--cyan)}
+.sico{font-size:22px}
+
+/* SATELLITE */
+#sat{position:fixed;top:12%;right:8%;font-size:46px;z-index:5;opacity:0;pointer-events:none;
+  animation:satf 22s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(0,245,255,.4))}
+@keyframes satf{0%{transform:translate(0,0) rotate(-5deg)}25%{transform:translate(-18px,14px) rotate(8deg)}
+  50%{transform:translate(-8px,28px) rotate(-3deg)}75%{transform:translate(14px,14px) rotate(7deg)}100%{transform:translate(0,0) rotate(-5deg)}}
+
+/* SCROLL REVEAL */
+.rv{opacity:0;transform:translateY(42px)}
+
+/* FOOTER */
+footer{padding:22px;text-align:center;border-top:1px solid rgba(255,255,255,.04);
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(184,204,238,.35);letter-spacing:1px}
+
+/* ─── RESPONSIVE ─────────────────────────── */
+@media(max-width:768px){
+  .agrid{grid-template-columns:1fr;gap:36px}
+  .nm{display:none}
+  #term{width:210px;font-size:10px}
+  #rsv{width:65px;height:152px}
+  #lp{width:110px}
+  .str{height:50px}.str.l{right:26px}.str.r{left:26px}
+  #lb{padding:13px 36px;font-size:13px}
+}
+@media(max-width:480px){
+  .htitle{font-size:2rem}
+  .pgr,.agr{grid-template-columns:1fr}
+  .hgr{grid-template-columns:repeat(2,1fr)}
+  .avw{width:130px;height:130px}
+  .av{font-size:52px}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cdot"></div>
+<div id="cring"></div>
+
+<!-- ══════════════ LAUNCH SCREEN ══════════════ -->
+<div id="ls">
+  <div id="sky"></div>
+  <canvas id="sc"></canvas>
+  <div class="cld" id="c1"></div>
+  <div class="cld" id="c2"></div>
+  <div class="cld" id="c3"></div>
+  <div id="earth"></div>
+
+  <!-- TERMINAL -->
+  <div id="term">
+    <div id="th"><div class="td r"></div><div class="td y"></div><div class="td g"></div>
+      <span style="font-size:10px;margin-left:8px;opacity:.5">mission-control.sh</span></div>
+    <div id="tc"></div>
+  </div>
+
+  <!-- LAUNCH COMPLEX -->
+  <div id="lc">
+    <div id="rw">
+      <!-- ROCKET SVG -->
+      <svg id="rsv" viewBox="0 0 100 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#7a7a7a"/><stop offset="25%" stop-color="#c8c8c8"/>
+            <stop offset="55%" stop-color="#ebebeb"/><stop offset="80%" stop-color="#d0d0d0"/>
+            <stop offset="100%" stop-color="#909090"/></linearGradient>
+          <linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#999"/><stop offset="45%" stop-color="#f0f0f0"/>
+            <stop offset="100%" stop-color="#aaa"/></linearGradient>
+          <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#686868"/><stop offset="100%" stop-color="#a0a0a0"/></linearGradient>
+          <radialGradient id="wg" cx="38%" cy="32%">
+            <stop offset="0%" stop-color="#66bbff"/><stop offset="100%" stop-color="#012244"/></radialGradient>
+          <radialGradient id="eg" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#555"/><stop offset="100%" stop-color="#222"/></radialGradient>
+        </defs>
+        <!-- Nose cone -->
+        <path d="M50,4 C46,14 36,34 33,56 L67,56 C64,34 54,14 50,4Z" fill="url(#ng)"/>
+        <ellipse cx="50" cy="4.5" rx="2.5" ry="3.5" fill="#fff" opacity=".5"/>
+        <!-- Fairing separation line -->
+        <line x1="33" y1="38" x2="67" y2="38" stroke="rgba(0,0,0,.12)" stroke-width=".6"/>
+        <!-- Body -->
+        <rect x="33" y="53" width="34" height="122" rx="3.5" fill="url(#bg)"/>
+        <!-- Panel lines -->
+        <line x1="50" y1="58" x2="50" y2="175" stroke="rgba(0,0,0,.12)" stroke-width=".5"/>
+        <line x1="33" y1="95" x2="67" y2="95" stroke="rgba(0,0,0,.1)" stroke-width=".5"/>
+        <line x1="33" y1="128" x2="67" y2="128" stroke="rgba(0,0,0,.1)" stroke-width=".5"/>
+        <!-- Blue stripe -->
+        <rect x="33" y="70" width="34" height="4.5" fill="#0088ee" opacity=".9"/>
+        <!-- Red stripe -->
+        <rect x="33" y="77" width="34" height="2" fill="#dd2222" opacity=".7"/>
+        <!-- Window -->
+        <circle cx="50" cy="93" r="10.5" fill="#111" stroke="#5a5a5a" stroke-width="1.5"/>
+        <circle cx="50" cy="93" r="8.5" fill="url(#wg)"/>
+        <circle cx="47" cy="90" r="3" fill="rgba(255,255,255,.35)"/>
+        <circle cx="52" cy="95" r="1.5" fill="rgba(255,255,255,.15)"/>
+        <!-- Mission badge -->
+        <rect x="39" y="110" width="22" height="14" rx="2" fill="rgba(0,18,52,.85)" stroke="rgba(0,180,255,.42)" stroke-width=".5"/>
+        <text x="50" y="120" text-anchor="middle" font-family="monospace" font-size="4.2" fill="#00ccff">DS-1</text>
+        <!-- Left fin -->
+        <path d="M33,150 L9,180 L18,180 L33,172Z" fill="url(#fg)"/>
+        <path d="M33,156 L9,180 L18,180 L33,167Z" fill="rgba(0,0,0,.18)"/>
+        <!-- Right fin -->
+        <path d="M67,150 L91,180 L82,180 L67,172Z" fill="url(#fg)"/>
+        <path d="M67,156 L91,180 L82,180 L67,167Z" fill="rgba(0,0,0,.18)"/>
+        <!-- Center fin -->
+        <path d="M44,168 L44,188 L50,183 L56,188 L56,168Z" fill="#999"/>
+        <!-- Engine skirt -->
+        <path d="M37,174 L33,188 L67,188 L63,174Z" fill="#7a7a7a"/>
+        <rect x="37" y="170" width="26" height="6" rx="2" fill="#888"/>
+        <ellipse cx="50" cy="188" rx="15" ry="3.5" fill="url(#eg)"/>
+        <ellipse cx="50" cy="188" rx="8" ry="1.8" fill="#1a1a1a"/>
+      </svg>
+      <!-- Flame -->
+      <div id="fc">
+        <div class="fl-plasma"></div>
+        <div class="fl-mid"></div>
+        <div class="fl-core"></div>
+      </div>
+    </div>
+    <!-- Platform -->
+    <div id="pa">
+      <div class="str l"></div><div class="str r"></div>
+      <div class="armc"></div>
+      <div id="lp"></div>
+    </div>
+  </div>
+
+  <!-- LAUNCH BUTTON -->
+  <button id="lb">🚀&nbsp;Explore My Cosmos</button>
+</div>
+
+<!-- ══════════════ SATELLITE ══════════════ -->
+<div id="sat">🛸</div>
+
+<!-- ══════════════ PORTFOLIO ══════════════ -->
+<div id="port">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nl">PR-ID01</div>
+    <ul class="nm">
+      <li><a href="#about">ABOUT</a></li>
+      <li><a href="#achievements">MISSIONS</a></li>
+      <li><a href="#projects">PROJECTS</a></li>
+      <li><a href="#hobbies">HOBBIES</a></li>
+      <li><a href="#contact">CONTACT</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hc rv">
+      <div class="avw">
+        <div class="avring"></div>
+        <div class="av"><img src="profile.jpeg" alt="Prateek Raj"
+          style="width:100%; height:100%; object-fit:cover; object-position:center top;"></div>
+      </div>
+      <h2 class="name">Prateek Raj <style> .name {
+  margin-top: 10px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  text-align: center;
+  text-shadow: 0 0 10px var(--cyan);
+}</style></h2>
+      
+      <div class="hbadge">MISSION STATUS-> LEARNING • BUILDING • DEPLOYING</div>
+      <h1 class="htitle">AI Engineer & Data Scientist<br></h1>
+      <p class="hsub">Transforming Data into Smart Solutions using AI & ML &nbsp;</p>
+      <div class="htags">
+        <span class="tag">🧠 Machine Learning</span>
+        <span class="tag">📊 Data Science</span>
+        <span class="tag">🤖 Deep Learning</span>
+        <span class="tag">🌐 Web Dev</span>
+        <!-- <span class="tag">☁️ Cloud & MLOps</span> -->
+      </div>
+      <div class="hcta">
+        <a href="#projects" class="btn-p">Explore My Work</a>
+        <a href="#contact" class="btn-o">Let’s Connect</a>
+      </div>
+    </div>
+    <div class="ticker">
+      <div class="tick-inner">
+        <span class="tick-item">◆ PYTHON</span><span class="tick-item">◆ TENSORFLOW</span>
+        <span class="tick-item">◆ PYTORCH</span><span class="tick-item">◆ SCIKIT-LEARN</span>
+        <span class="tick-item">◆ SQL</span><span class="tick-item">◆ PANDAS</span>
+        <span class="tick-item">◆ NLP</span><span class="tick-item">◆ COMPUTER VISION</span>
+        <span class="tick-item">◆ DOCKER</span><span class="tick-item">◆ AWS</span>
+        <span class="tick-item">◆ REACT</span><span class="tick-item">◆ FASTAPI</span>
+        <span class="tick-item">◆ PYTHON</span><span class="tick-item">◆ TENSORFLOW</span>
+        <span class="tick-item">◆ PYTORCH</span><span class="tick-item">◆ SCIKIT-LEARN</span>
+        <span class="tick-item">◆ SQL</span><span class="tick-item">◆ PANDAS</span>
+        <span class="tick-item">◆ NLP</span><span class="tick-item">◆ COMPUTER VISION</span>
+        <span class="tick-item">◆ DOCKER</span><span class="tick-item">◆ AWS</span>
+        <span class="tick-item">◆ REACT</span><span class="tick-item">◆ FASTAPI</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="div"></div>
+
+  <!-- ABOUT -->
+  <section id="about" class="sec">
+    <div class="shead rv">
+      <span class="slabel">// MISSION BRIEF</span>
+      <h2 class="stitle">About <span>Me</span></h2>
+      <div class="sline"></div>
+    </div>
+    <div class="agrid">
+      <div class="atxt rv">
+        <p>
+        Hi, I'm <strong>Prateek Raj</strong>, a BTech Computer Science student specializing in <strong>Artificial Intelligence and Machine Learning</strong>. I’m someone who is deeply curious about how things work — especially how data can be transformed into something meaningful and impactful.
+        </p>
+
+        <p>
+        What started as simple curiosity turned into a strong passion for exploring intelligence through machines. I enjoy thinking, building, and constantly pushing myself to understand patterns, solve problems, and create things that actually make a difference.
+        </p>
+
+        <p>
+        Beyond academics, I carry an entrepreneurial mindset. I like turning ideas into reality and experimenting with concepts like <strong>Bloomora</strong> and <strong>Oromist</strong>, where creativity meets innovation. For me, it’s not just about building — it’s about building something that matters.
+        </p>
+
+        <p>
+        I also love crafting clean and engaging digital experiences, because I believe technology should not only work well but also feel good to use. Right now, I’m focused on growing, learning, and evolving into a <strong>Data Scientist and ML Engineer</strong> — one step at a time.
+        </p>
+      </div>
+      <div class="about-photo rv" style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        position:relative;
+        ">
+        <img src="aboutmeimage.jpeg" alt="Prateek Raj"
+          style="
+            width:50vw;
+            height:50vw;
+            max-width:420px;
+            max-height:420px;
+            object-fit:cover;
+            border-radius:50%;
+            border:3px solid rgba(0,245,255,0.4);
+            box-shadow:
+              0 0 25px rgba(0,245,255,0.3),
+              0 0 60px rgba(0,245,255,0.2),
+              inset 0 0 25px rgba(0,245,255,0.15);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+          "
+          onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 40px rgba(0,245,255,0.5),0 0 80px rgba(0,245,255,0.3),inset 0 0 30px rgba(0,245,255,0.2)'"
+          onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 25px rgba(0,245,255,0.3),0 0 60px rgba(0,245,255,0.2),inset 0 0 25px rgba(0,245,255,0.15)'"
+        >
+      </div>
+    </div>
+  </section>
+
+  <div class="div"></div>
+
+  <!-- ACHIEVEMENTS -->
+  <section id="achievements" class="sec">
+    <div class="shead rv">
+      <span class="slabel">// MISSION LOG</span>
+      <h2 class="stitle">Achieve<span>ments</span></h2>
+      <div class="sline"></div>
+    </div>
+    <div class="agr">
+      <div class="ac rv"><span class="aico">🏆</span>
+        <div class="atit">Hackathon Champion</div>
+        <p class="adsc">Won Launch Hack 2024 by building a Green Health Monitoring system leveraging data-driven insights, achieving high accuracy and scalable deployment. </p>
+        <!-- <span class="abadge">SIH 2024</span></div> -->
+      </div>
+      <div class="ac rv"><span class="aico">📜</span>
+        <div class="atit">SIH Avishkar Hackathon</div>
+        <p class="adsc">Shortlisted for the SIH Avishkar Hackathon from a pool of participants, recognizing my solution’s innovation and feasibility</p>
+        <!-- <span class="abadge">GOOGLE CERTIFIED</span></div> -->
+      </div>
+
+      <div class="ac rv"><span class="aico">💻</span>
+        <div class="atit">Cryptic Hunt 2023 – 2nd Runner-Up</div>
+        <p class="adsc">Achieved 2nd Runner-Up in Cryptic Hunt 2023, showcasing logical thinking, pattern recognition, and rapid problem-solving.</p>
+        <!-- <span class="abadge">AWS CERTIFIED</span> -->
+      </div>
+      <div class="ac rv"><span class="aico">🛍️</span>
+        <div class="atit">Founder – Bloomora</div>
+        <p class="adsc">Built and managed Bloomora, an e-commerce brand offering a curated range of lifestyle and aesthetic products, built and managed from scratch. Led branding, content strategy, and audience growth while gaining hands-on experience in marketing, customer behavior, and business execution.</p>
+        <!-- <span class="abadge">INSTITUTION AWARD</span> -->
+      </div>
+      <div class="ac rv"><span class="aico">🚗✨</span>
+        <div class="atit">Founder – Oromist</div>
+        <p class="adsc">Developing Oromist, a premium car fragrance brand aimed at enhancing in-car experiences with luxury scents. Currently in its early stage. Working on product development, branding, and market positioning with a vision to build a scalable and impactful venture.</p>
+        <!-- <span class="abadge">KAGGLE EXPERT</span> -->
+      </div>
+      <!-- <div class="ac rv"><span class="aico">🎓</span>
+        <div class="atit">IEEE Publication</div>
+        <p class="adsc">Published research on "Efficient Feature Extraction in Lightweight CNN Architectures" in an IEEE conference.</p>
+        <span class="abadge">IEEE PUBLISHED</span></div>-->
+    </div>
+  </section>
+
+  <div class="div"></div>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="sec">
+    <div class="shead rv">
+      <span class="slabel">// MISSION ARCHIVES</span>
+      <h2 class="stitle">Featured <span>Projects</span></h2>
+      <div class="sline"></div>
+    </div>
+    <div class="pgr">
+      <div class="pc rv" data-tilt>
+        <div class="pico">🐂</div>
+        <div class="ptit">Image Based Breed recognition for Cows & Buffaloes of India</div>
+        <p class="pdsc">An AI-powered system that recognizes animal breeds from images in real time using YOLOv8, achieving high accuracy (~89%). The model is trained on a custom dataset of 20+ cow and buffalo breeds, enabling precise classification through advanced computer vision and a clean, user-friendly interface.</p>
+        <div class="ptags"><span class="ptag">Python</span><span class="ptag">YOLOv8</span><span class="ptag">OpenCV</span><span class="ptag">PyTorch</span><span class="ptag">EfficientNet</span><span class="ptag">Streamlit</span></div>
+        <div class="plinks"><a href="https://indian-cow-breed-recognition.streamlit.app/" target="_blank" class="plink">⚡ Live Demo</a><a href="https://github.com/Prateekraj0/Indian-Bovine-Recognition-system" target="_blank" class="plink">📂 GitHub</a></div></div>
+      <div class="pc rv" data-tilt>
+        <div class="pico">💼</div>
+        <div class="ptit">Skill Based Job Recommendation System</div>
+        <p class="pdsc">A machine learning-based platform that maps user skills to relevant career opportunities. It not only recommends roles but also highlights skill gaps, suggests learning paths and courses, and estimates expected salary, enabling smarter and more guided career planning.</p>
+        <div class="ptags"><span class="ptag">Python</span><span class="ptag">Scikit-Learn</span><span class="ptag">Pandas</span><span class="ptag">Streamlit</span><span class="ptag">Pandas</span><span class="ptag">NlP</span></div>
+        <div class="plinks"><a href="https://skill-based-career-recommendation-system.streamlit.app/" target="_blank" class="plink">⚡ Live Demo</a><a href="https://github.com/Prateekraj0/Skill-Based-Career-Recommendation-System" target="_blank" class="plink">📂 GitHub</a></div></div>
+      <div class="pc rv" data-tilt>
+        <div class="pico">🗑️</div>
+        <div class="ptit">Waste Segregation Smart Dustbin</div>
+        <p class="pdsc">An AI-powered waste classification system that uses deep learning to identify and categorize waste into 12 distinct classes including plastic, metal, glass, and organic waste. The model is trained on a custom dataset and achieves high accuracy (~95%), enabling automated and efficient waste segregation. Designed with a user-friendly interface, the system allows users to upload images and instantly get predictions, promoting smarter and sustainable waste management.</p>
+        <div class="ptags"><span class="ptag">Python</span><span class="ptag">Streamlit</span><span class="ptag">TensorFlow</span><span class="ptag">OpenCv</span><span class="ptag">CNN</span></div>
+        </div>
+      <div class="pc rv" data-tilt>
+        <div class="pico">🐄</div>
+        <div class="ptit">Image-Based Cattle Disease Detection</div>
+        <p class="pdsc">An ongoing AI project focused on detecting cattle diseases through image analysis using deep learning. The goal is to build a reliable system for early disease identification, helping improve livestock health management and decision-making.</p>
+        <div class="ptags"><span class="ptag">Python</span><span class="ptag">YOLOv8</span><span class="ptag">OpenCV</span><span class="ptag">Streamlit</span><span class="ptag">PyTorch</span></div>
+        <div class="plinks"><a href="#" class="plink">⚡ OnGoing</a></div>
+      </div>
+    
+      <div class="pc rv" data-tilt>
+          <div class="pico">☘️</div>
+          <div class="ptit">Ai Based Plant Disease Detection</div>
+          <p class="pdsc">An ongoing AI project focused on detecting cattle diseases through image analysis using deep learning. The goal is to build a reliable system for early disease identification, helping improve livestock health management and decision-making.</p>
+          <div class="ptags"><span class="ptag">Python</span><span class="ptag">TensorFlow</span><span class="ptag">CNN</span><span class="ptag">Streamlit</span><span class="ptag">ResNet</span></div>
+          <div class="plinks"><a href="#" class="plink">⚡ OnGoing</a></div></div>
+      </div>
+    </section>div
+  </section>
+
+  <div class="div"></div>
+
+  <!-- HOBBIES -->
+  <section id="hobbies" class="sec">
+    <div class="shead rv">
+      <span class="slabel">// OFF-MISSION ACTIVITIES</span>
+      <h2 class="stitle">Hob<span>bies</span></h2>
+      <div class="sline"></div>
+    </div>
+    <div class="hgr">
+      <div class="hcard rv"><span class="hico">📚</span><div class="hnam">Reading Fictional Books</div><div class="hdsc">Explored 50+ fictional worlds — from imagination to insight, fueling creativity and perspective.</div></div>
+      <div class="hcard rv"><span class="hico">💻</span><div class="hnam">Coding</div><div class="hdsc">Turning ideas into reality through code — building, experimenting, and constantly leveling up.</div></div>
+      <div class="hcard rv"><span class="hico">🏍️</span><div class="hnam">Riding</div><div class="hdsc">Finding freedom on the road — where speed meets clarity and every ride tells a story.</div></div>
+      <div class="hcard rv"><span class="hico">🏔️</span><div class="hnam">Trekking</div><div class="hdsc">Chasing heights and challenges — embracing nature, adventure, and resilience.</div></div>
+      <div class="hcard rv"><span class="hico">🤳</span><div class="hnam">Vlogging & Content Creation</div><div class="hdsc">Documenting moments and sharing stories — creating engaging content on YouTube & Instagram.</div></div>
+      <div class="hcard rv"><span class="hico">⛹️‍♂️</span><div class="hnam">Playing BasketBall</div><div class="hdsc">Playing for passion and energy — enjoying the game, teamwork, and competitive spirit.</div></div>
+      <div class="hcard rv"><span class="hico">🎮</span><div class="hnam">Esports & Gaming</div><div class="hdsc">Passionate about PC and mobile gaming — sharpening reflexes, strategy, and decision-making through fast-paced gameplay.</div></div>
+
+    </div>
+  </section>
+
+  <div class="div"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="shead rv">
+      <span class="slabel">// ESTABLISH CONTACT</span>
+      <h2 class="stitle">Get In <span>Touch</span></h2>
+      <div class="sline"></div>
+    </div>
+    <div class="ccon">
+      <p class="cdsc rv">Ready to collaborate on the next big mission? Whether it's AI research,
+      a data project, or just geeking out about space — my comms are always open.</p>
+      <div class="sgr rv">
+        <a href="https://github.com/Prateekraj0" target="_blank" class="slink"><span class="sico">🐙</span>GitHub</a>
+        <a href="https://www.linkedin.com/in/prateek-raj-8177a4276/" target="_blank" class="slink"><span class="sico">💼</span>LinkedIn</a>
+        <a href="https://www.instagram.com/its.prateekk?igsh=NWJ1djZnNzllZmxi" target="_blank" class="slink"><span class="sico">📸</span>Instagram</a>
+        <a href="mailto:prateekraj9507@gmail.com" class="slink"><span class="sico">📧</span>Email</a>
+      </div>
+      <a href="#" class="btn-p rv" style="margin-top:8px">&nbsp;See You in the Next Orbit ! Byeee :)</a>
+    </div>
+  </section>
+
+  <footer><p>⚡ Built with passion in the cosmos &nbsp;·&nbsp; Data Scientist in Orbit &nbsp;·&nbsp; 2025</p></footer>
+</div><!-- /port -->
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ─── CURSOR ──────────────────────────────────── */
+const DOT = document.getElementById('cdot');
+const RING = document.getElementById('cring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;
+  DOT.style.left=mx+'px';DOT.style.top=my+'px'});
+(function animC(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;
+  RING.style.left=rx+'px';RING.style.top=ry+'px';requestAnimationFrame(animC)})();
+document.querySelectorAll('a,button,.pc,.hcard,.ac,.slink').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{DOT.style.width='10px';DOT.style.height='10px';
+    RING.style.width='46px';RING.style.height='46px';RING.style.borderColor='var(--cyan)'});
+  el.addEventListener('mouseleave',()=>{DOT.style.width='6px';DOT.style.height='6px';
+    RING.style.width='34px';RING.style.height='34px'})});
+
+/* ─── STARS CANVAS ────────────────────────────── */
+const cvs = document.getElementById('sc');
+const cx2 = cvs.getContext('2d');
+let stars=[], stAlpha=0, portfolioCanvas=null;
+
+function resizeCvs(){cvs.width=window.innerWidth;cvs.height=window.innerHeight}
+function mkStars(){stars=[];
+  for(let i=0;i<130;i++) stars.push({
+    x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+    r:Math.random()*1.8+.25, op:Math.random(),
+    spd:Math.random()*.018+.004, dir:Math.random()>.5?1:-1})}
+function drawStars(){
+  cx2.clearRect(0,0,cvs.width,cvs.height);
+  if(stAlpha<=0) return;
+  stars.forEach(s=>{
+    s.op+=s.spd*s.dir;
+    if(s.op>=1){s.op=1;s.dir=-1}if(s.op<=.08){s.op=.08;s.dir=1}
+    cx2.beginPath();cx2.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx2.fillStyle=`rgba(255,255,255,${s.op*stAlpha})`;cx2.fill();
+    if(s.r>1.3){cx2.beginPath();cx2.arc(s.x,s.y,s.r*2.8,0,Math.PI*2);
+      cx2.fillStyle=`rgba(180,220,255,${s.op*stAlpha*.25})`;cx2.fill()}})}
+function animStars(){drawStars();requestAnimationFrame(animStars)}
+resizeCvs();mkStars();animStars();
+window.addEventListener('resize',()=>{resizeCvs();mkStars()});
+
+/* ─── TERMINAL ────────────────────────────────── */
+const lines=[
+  {t:'> Initializing Data Scientist…',c:'#00f5ff'},
+  {t:'> Loading ML modules…         ✓',c:'#00ff88'},
+  {t:'> Calibrating neural nets…    ✓',c:'#00ff88'},
+  {t:'> Prepping orbital trajectory… ✓',c:'#00ff88'},
+  {t:'> LAUNCH SEQUENCE READY ⚡',c:'#ffd700'}];
+const TC=document.getElementById('tc');
+const LB=document.getElementById('lb');
+let li=0;
+function typeLine(){
+  if(li>=lines.length){setTimeout(()=>gsap.to(LB,{opacity:1,duration:.9,ease:'power2.out'}),300);return}
+  const ln=lines[li];
+  const sp=document.createElement('span');sp.className='tl';sp.style.color=ln.c;TC.appendChild(sp);
+  let ci=0;
+  const iv=setInterval(()=>{if(ci<ln.t.length){sp.textContent+=ln.t[ci++]}
+    else{clearInterval(iv);li++;setTimeout(typeLine,160)}},28)}
+setTimeout(typeLine,900);
+
+/* ─── SMOKE ───────────────────────────────────── */
+let smokeIv=null;
+function mkSmoke(bx,by){
+  const sz=22+Math.random()*46, dur=1.4+Math.random()*1.4;
+  const tx=(Math.random()-.5)*110, ty=-(55+Math.random()*80);
+  const p=document.createElement('div');p.className='spuff';
+  p.style.cssText=`width:${sz}px;height:${sz}px;left:${bx+(Math.random()-.5)*18-sz/2}px;top:${by-sz/2}px;transition:transform ${dur}s ease-out,opacity ${dur}s ease-out`;
+  document.body.appendChild(p);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{p.style.transform=`translate(${tx}px,${ty}px) scale(3)`;p.style.opacity='0'}));
+  setTimeout(()=>p.remove(),(dur+.1)*1000)}
+
+/* ─── LAUNCH SEQUENCE ─────────────────────────── */
+LB.addEventListener('click',()=>{
+  if(LB.dataset.fired) return;
+  LB.dataset.fired='1'; LB.style.pointerEvents='none';
+  const RW=document.getElementById('rw'), FC=document.getElementById('fc'),
+        SKY=document.getElementById('sky'), EARTH=document.getElementById('earth'),
+        LS=document.getElementById('ls'), PORT=document.getElementById('port'),
+        SAT=document.getElementById('sat'),
+        C1=document.getElementById('c1'),C2=document.getElementById('c2'),C3=document.getElementById('c3');
+
+  const tl=gsap.timeline();
+
+  // Fade button
+  tl.to(LB,{opacity:0,scale:.85,duration:.35});
+  // Vibrate rocket
+  tl.to(RW,{x:4,duration:.055,repeat:14,yoyo:true,ease:'none'},'-=.1');
+  // Ignite flame
+  tl.to(FC,{opacity:1,duration:.28,ease:'power2.in',
+    onStart(){
+      const lp=document.getElementById('lp');
+      const r=lp.getBoundingClientRect();
+      const bx=r.left+r.width/2, by=r.top+4;
+      smokeIv=setInterval(()=>mkSmoke(bx,by),110)}},'-=.15');
+  // Hold
+  tl.to({},{duration:.55});
+  // LAUNCH
+  tl.to(RW,{y:-window.innerHeight*1.6,duration:2.6,ease:'power4.in'});
+  // Sky darkens
+  tl.to(SKY,{background:'linear-gradient(180deg,#020308 0%,#010106 40%,#000000 100%)',duration:2.6,ease:'power2.in'},'<');
+  // Stars fade in
+  tl.to({},{duration:2.6,onUpdate:function(){stAlpha=this.progress()}},'<');
+  // Earth slides down
+  tl.to(EARTH,{y:250,duration:2.6,ease:'power2.in'},'<');
+  // Clouds away
+  tl.to([C1,C2,C3],{y:-280,opacity:0,duration:1.4,ease:'power2.in'},'<');
+  // Stop smoke
+  tl.add(()=>{clearInterval(smokeIv);smokeIv=null},'<0.9');
+  // Fade out launch screen
+  tl.to(LS,{opacity:0,duration:1,ease:'power2.inOut'},'-=.6');
+  // Reveal portfolio
+  tl.add(()=>{
+    LS.style.display='none'; stAlpha=1;
+    PORT.classList.add('on');
+    // Move canvas to body for portfolio background
+    document.body.insertBefore(cvs,PORT);
+    cvs.style.position='fixed';cvs.style.zIndex='0';cvs.style.opacity='1';
+    gsap.to(PORT,{opacity:1,duration:1.1,ease:'power2.out'});
+    gsap.fromTo(PORT,{scale:.96},{scale:1,duration:1.1,ease:'power2.out'});
+    gsap.to(SAT,{opacity:.75,duration:1.2,delay:1.5});
+    setTimeout(initScrollAnim,200)});
+});
+
+/* ─── SCROLL ANIMATIONS ───────────────────────── */
+function initScrollAnim(){
+  document.querySelectorAll('.rv').forEach((el,i)=>{
+    gsap.fromTo(el,{opacity:0,y:46},{opacity:1,y:0,duration:.9,ease:'power3.out',
+      scrollTrigger:{trigger:el,start:'top 86%',toggleActions:'play none none none'},
+      delay:(i%5)*.08})});
+  document.querySelectorAll('.sfill').forEach(b=>{
+    ScrollTrigger.create({trigger:b,start:'top 88%',
+      onEnter:()=>{b.style.width=b.dataset.w+'%'}})});
+}
+
+/* ─── 3D TILT CARDS ───────────────────────────── */
+document.querySelectorAll('[data-tilt]').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+    gsap.to(card,{rotateY:x*16,rotateX:-y*16,duration:.35,ease:'power2.out',transformPerspective:750})});
+  card.addEventListener('mouseleave',()=>{
+    gsap.to(card,{rotateX:0,rotateY:0,duration:.65,ease:'elastic.out(1,.75)'})})});
+
+/* ─── MAGNETIC BUTTONS ────────────────────────── */
+document.querySelectorAll('.btn-p,.btn-o,.slink').forEach(b=>{
+  b.addEventListener('mousemove',e=>{
+    const r=b.getBoundingClientRect();
+    gsap.to(b,{x:(e.clientX-r.left-r.width/2)*.24,y:(e.clientY-r.top-r.height/2)*.24,duration:.3,ease:'power2.out'})});
+  b.addEventListener('mouseleave',()=>gsap.to(b,{x:0,y:0,duration:.55,ease:'elastic.out(1,.8)'}))});
+
+/* ─── NAV SCROLL EFFECT ───────────────────────── */
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('nav');
+  nav.style.boxShadow=window.scrollY>60?'0 4px 30px rgba(0,0,0,.6)':'none'});
+
+/* ─── HERO PARALLAX ──────────────────────────── */
+document.addEventListener('mousemove',e=>{
+  const hc=document.querySelector('.hc');
+  if(!hc) return;
+  gsap.to(hc,{x:(e.clientX/window.innerWidth-.5)*18,y:(e.clientY/window.innerHeight-.5)*9,duration:1.1,ease:'power2.out'})});
+
+/* ─── MOUSE STAR INTERACTION (portfolio) ──────── */
+document.addEventListener('mousemove',e=>{
+  if(!portfolioCanvas) return;
+  const mr=.04;
+  stars.forEach(s=>{
+    const dx=s.x-e.clientX,dy=s.y-e.clientY,dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<120){s.x+=dx*mr*(1-dist/120);s.y+=dy*mr*(1-dist/120)}})});
+</script>
+</body>
+</html>
